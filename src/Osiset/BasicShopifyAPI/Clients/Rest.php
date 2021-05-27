@@ -193,7 +193,7 @@ class Rest extends AbstractClient implements RestRequester
         $body = null;
         $status = null;
 
-        $logContext['request'] = [
+        $logContext['shopify_request'] = [
                 'uri' => $request->getUri(),
                 'method' => $request->getMethod(),
                 'headers' => $request->getHeaders()
@@ -211,7 +211,7 @@ class Rest extends AbstractClient implements RestRequester
                 $body = $body->hasErrors() ? $body->getErrors() : null;
             }
 
-            $logContext['response'] = [
+            $logContext['shopify_response'] = [
                 'status_code' => $resp->getStatusCode(),
                 'body' => $body,   // $resp->getBody()->__toString(),
                 'headers' => $resp->getHeaders()
