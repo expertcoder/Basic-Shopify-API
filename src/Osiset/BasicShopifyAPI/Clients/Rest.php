@@ -5,6 +5,7 @@ namespace Osiset\BasicShopifyAPI\Clients;
 use Exception;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\RequestException;
+use Illuminate\Support\Facades\Log;
 use Osiset\BasicShopifyAPI\Contracts\RestRequester;
 use Osiset\BasicShopifyAPI\ResponseAccess;
 use Psr\Http\Message\ResponseInterface;
@@ -185,9 +186,18 @@ class Rest extends AbstractClient implements RestRequester
      */
     public function handleFailure(RequestException $e): array
     {
+        report($e);
+
+        $request = $e->getRequest();
         $resp = $e->getResponse();
         $body = null;
         $status = null;
+
+        $logContext['request'] = [
+                'uri' => $request->getUri(),
+                'method' => $request->getMethod(),
+                'headers' => $request->getHeaders()
+        ];
 
         if ($resp) {
             // Get the body stream
@@ -200,7 +210,16 @@ class Rest extends AbstractClient implements RestRequester
                 $body = $this->toResponse($rawBody);
                 $body = $body->hasErrors() ? $body->getErrors() : null;
             }
+
+            $logContext['response'] = [
+                'status_code' => $resp->getStatusCode(),
+                'body' => $body,   // $resp->getBody()->__toString(),
+                'headers' => $resp->getHeaders()
+            ];
+
         }
+
+        Log::error('Shopify Rest Requset failed', $logContext);
 
         return [
             'errors'     => true,
