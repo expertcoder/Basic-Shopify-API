@@ -3,6 +3,7 @@
 namespace Osiset\BasicShopifyAPI\Clients;
 
 use GuzzleHttp\Exception\RequestException;
+use Illuminate\Support\Facades\Log;
 use Osiset\BasicShopifyAPI\Contracts\GraphRequester;
 use Psr\Http\Message\ResponseInterface;
 
@@ -90,6 +91,8 @@ class Graph extends AbstractClient implements GraphRequester
      */
     public function handleFailure(RequestException $e): array
     {
+        report($e);
+
         $resp = $e->getResponse();
         $body = null;
         $status = null;
@@ -105,7 +108,25 @@ class Graph extends AbstractClient implements GraphRequester
                 $body = $this->toResponse($rawBody);
                 $body = $body->hasErrors() ? $body->getErrors() : null;
             }
+
+            $logContext['shopify_response'] = [
+                'status_code' => $resp->getStatusCode(),
+                'body' => $body,   // $resp->getBody()->__toString(),
+                'headers' => $resp->getHeaders()
+            ];
+
         }
+
+        $request = $e->getRequest();
+
+        $logContext['shopify_request'] = [
+            'api_type' => 'GraphQL',
+            'uri' => $request->getUri(),
+            'method' => $request->getMethod(),
+            'headers' => $request->getHeaders()
+        ];
+
+        Log::error('Shopify API Requset failed', $logContext);
 
         return [
             'errors'     => true,
