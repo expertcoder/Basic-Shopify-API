@@ -188,16 +188,10 @@ class Rest extends AbstractClient implements RestRequester
     {
         report($e);
 
-        $request = $e->getRequest();
         $resp = $e->getResponse();
         $body = null;
         $status = null;
 
-        $logContext['shopify_request'] = [
-                'uri' => $request->getUri(),
-                'method' => $request->getMethod(),
-                'headers' => $request->getHeaders()
-        ];
 
         if ($resp) {
             // Get the body stream
@@ -219,7 +213,16 @@ class Rest extends AbstractClient implements RestRequester
 
         }
 
-        Log::error('Shopify Rest Requset failed', $logContext);
+        $request = $e->getRequest();
+
+        $logContext['shopify_request'] = [
+            'api_type' => 'Rest',
+            'uri' => $request->getUri(),
+            'method' => $request->getMethod(),
+            'headers' => $request->getHeaders()
+        ];
+
+        Log::error('Shopify API Requset failed', $logContext);
 
         return [
             'errors'     => true,
