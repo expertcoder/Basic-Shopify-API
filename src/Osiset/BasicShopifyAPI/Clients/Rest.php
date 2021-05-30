@@ -217,7 +217,7 @@ class Rest extends AbstractClient implements RestRequester
 
         $logContext['shopify_request'] = [
             'api_type' => 'Rest',
-            'uri' => $request->getUri(),
+            'uri' => $request->getUri()->__toString(),
             'method' => $request->getMethod(),
             'headers' => $request->getHeaders()
         ];
