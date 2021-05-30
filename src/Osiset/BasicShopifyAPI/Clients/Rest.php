@@ -219,7 +219,8 @@ class Rest extends AbstractClient implements RestRequester
             'api_type' => 'Rest',
             'uri' => $request->getUri()->__toString(),
             'method' => $request->getMethod(),
-            'headers' => $request->getHeaders()
+            'headers' => $request->getHeaders(),
+            'body' => $request->getBody()->__toString();
         ];
 
         Log::error('Shopify API Requset failed', $logContext);
