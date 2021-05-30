@@ -123,7 +123,8 @@ class Graph extends AbstractClient implements GraphRequester
             'api_type' => 'GraphQL',
             'uri' => $request->getUri()->__toString(),
             'method' => $request->getMethod(),
-            'headers' => $request->getHeaders()
+            'headers' => $request->getHeaders(),
+            'body' => $request->getBody()->__toString()
         ];
 
         Log::error('Shopify API Requset failed', $logContext);
