@@ -121,7 +121,7 @@ class Graph extends AbstractClient implements GraphRequester
 
         $logContext['shopify_request'] = [
             'api_type' => 'GraphQL',
-            'uri' => $request->getUri(),
+            'uri' => $request->getUri()->__toString(),
             'method' => $request->getMethod(),
             'headers' => $request->getHeaders()
         ];
